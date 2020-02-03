@@ -1,0 +1,23 @@
+{
+	"name": "com.aschelab.serializabledictionary",
+	"displayName": "SerializableDictionary",
+	"description": "",
+	"version": "1.0.1",
+	"unity": "2018.3",
+	"author": {
+        "name": "Syunta Washidu (AscheLab)",
+        "url": "https://github.com/AscheLab"
+    },
+    "license": {
+        "type": "MIT",
+        "url": "https://monry.mit-license.org"
+    },
+    "keywords": [],
+    "category": "",
+    "dependencies": {
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AscheLab/AscheLib.SerializableDictionary.git"
+    }
+}

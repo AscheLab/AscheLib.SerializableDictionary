@@ -1,0 +1,16 @@
+{
+    "name": "SelealizableDictionary.Editor",
+    "references": [
+        "SelealizableDictionary"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
