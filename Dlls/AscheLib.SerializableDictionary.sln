@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AscheLib.SerializableDictionary", "AscheLib.SerializableDictionary\AscheLib.SerializableDictionary.csproj", "{803BDB3D-59F3-48CB-92A9-7318358FADF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AscheLib.SerializableDictionary.Editor", "AscheLib.SerializableDictionary.Editor\AscheLib.SerializableDictionary.Editor.csproj", "{D3F2C68C-BDDA-4BCD-BE73-78292BAD726A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{803BDB3D-59F3-48CB-92A9-7318358FADF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{803BDB3D-59F3-48CB-92A9-7318358FADF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{803BDB3D-59F3-48CB-92A9-7318358FADF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{803BDB3D-59F3-48CB-92A9-7318358FADF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3F2C68C-BDDA-4BCD-BE73-78292BAD726A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3F2C68C-BDDA-4BCD-BE73-78292BAD726A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3F2C68C-BDDA-4BCD-BE73-78292BAD726A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3F2C68C-BDDA-4BCD-BE73-78292BAD726A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {60CBF533-2982-49AE-A789-F1CAD2E6E5BC}
+	EndGlobalSection
+EndGlobal
