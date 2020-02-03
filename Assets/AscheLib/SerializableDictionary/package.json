@@ -2,7 +2,7 @@
 	"name": "com.aschelab.serializabledictionary",
 	"displayName": "SerializableDictionary",
 	"description": "",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"unity": "2018.3",
 	"author": {
         "name": "Syunta Washidu (AscheLab)",

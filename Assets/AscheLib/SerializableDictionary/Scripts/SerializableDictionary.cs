@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace AscheLib.Collections {
 	/// <summary>
@@ -16,11 +17,28 @@ namespace AscheLib.Collections {
 	/// </summary>
 	[Serializable]
 	public abstract class SerializableDictionaryBase<TKey, TValue, TPair> : DrawableSerializableDictionaryBase,
-		IDictionary<TKey, TValue>
+		ICollection<KeyValuePair<TKey, TValue>>,
+		IEnumerable<KeyValuePair<TKey, TValue>>,
+		IEnumerable,
+		IDictionary<TKey, TValue>,
+		ICollection,
+		IDictionary,
+		IDeserializationCallback,
+		ISerializable
 		where TPair : SerializableKeyValuePairBase<TKey, TValue>,
 		new() {
+
 		[SerializeField]
 		private List<TPair> _kvArray = new List<TPair>();
+
+		private object syncRoot = new object();
+
+		public SerializableDictionaryBase() {
+
+		}
+		protected SerializableDictionaryBase(SerializationInfo info, StreamingContext context) {
+			_kvArray = (List<TPair>)info.GetValue("_kvArray", typeof(List<TPair>));
+		}
 
 		public TValue this[TKey key] {
 			set {
@@ -42,10 +60,18 @@ namespace AscheLib.Collections {
 			}
 		}
 
-		public int Count { get { return _kvArray.Count; } }
-		public ICollection<TKey> Keys { get { return _kvArray.Select(pair => pair.Key).ToList(); } }
-		public ICollection<TValue> Values { get { return _kvArray.Select(pair => pair.Value).ToList(); } }
-		public bool IsReadOnly { get { return false; } }
+		public int Count => _kvArray.Count;
+		public ICollection<TKey> Keys => _kvArray.Select(pair => pair.Key).ToList();
+		public ICollection<TValue> Values => _kvArray.Select(pair => pair.Value).ToList();
+		public bool IsReadOnly => false;
+
+		bool IDictionary.IsFixedSize => false;
+		bool ICollection.IsSynchronized => false;
+		ICollection IDictionary.Keys => ToDictionary().Keys;
+		ICollection IDictionary.Values => ToDictionary().Values;
+		object ICollection.SyncRoot => syncRoot;
+		object IDictionary.this[object key] { get => this[(TKey)key]; set => this[(TKey)key] = (TValue)value; }
+
 		public TValue GetValue(TKey key) {
 			if(ContainsKey(key)) {
 				return _kvArray.First(pair => pair.Key.Equals(key)).Value;
@@ -134,7 +160,38 @@ namespace AscheLib.Collections {
 			return ToDictionary().GetEnumerator();
 		}
 		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
-			throw new NotImplementedException();
+			foreach (var kv in _kvArray) {
+				array.SetValue(kv, arrayIndex);
+				arrayIndex++;
+			}
+		}
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) {
+			try {
+				info.AddValue("_kvArray", _kvArray, typeof(List<TPair>));
+			}
+			catch (Exception e) {
+				throw new SerializationException(e.Message, e);
+			}
+		}
+		void IDeserializationCallback.OnDeserialization (object sender) {
+		}
+		void IDictionary.Add (object key, object value) {
+			Add((TKey)key, (TValue)value);
+		}
+		bool IDictionary.Contains (object key) {
+			return ContainsKey((TKey)key);
+		}
+		IDictionaryEnumerator IDictionary.GetEnumerator () {
+			return ToDictionary().GetEnumerator();
+		}
+		void IDictionary.Remove (object key) {
+			Remove((TKey)key);
+		}
+		void ICollection.CopyTo (Array array, int index) {
+			foreach (var kv in _kvArray) {
+				array.SetValue(kv, index);
+				index++;
+			}
 		}
 	}
 
