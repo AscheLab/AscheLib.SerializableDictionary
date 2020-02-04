@@ -228,4 +228,9 @@ namespace AscheLib.Collections {
 			return newPair;
 		}
 	}
+
+#if UNITY_2020_1_OR_NEWER
+	[Serializable] public class SerializableKeyValuePair<TKey, TValue> : SerializableKeyValuePairBase<TKey, TValue> { }
+	[Serializable] public class SerializableDictionary<TKey, TValue> : SerializableDictionaryBase<TKey, TValue, SerializableKeyValuePair<TKey, TValue>> { }
+#endif
 }
