@@ -18,7 +18,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
     }
   ],
   "dependencies": {
-    "com.aschelab.serializabledictionary": "1.1.0",
+    "com.aschelab.serializabledictionary": "1.2.0",
   ...
   }
 ```
