@@ -59,7 +59,7 @@ namespace AscheLib.Collections {
 				return GetValue(key);
 			}
 		}
-
+		public bool HasDuplicationKey { get => _kvArray.GroupBy(name => name).Where(name => name.Count() > 1).ToList().Count > 0; }
 		public int Count => _kvArray.Count;
 		public ICollection<TKey> Keys => _kvArray.Select(pair => pair.Key).ToList();
 		public ICollection<TValue> Values => _kvArray.Select(pair => pair.Value).ToList();
@@ -67,8 +67,8 @@ namespace AscheLib.Collections {
 
 		bool IDictionary.IsFixedSize => false;
 		bool ICollection.IsSynchronized => false;
-		ICollection IDictionary.Keys => ToDictionary().Keys;
-		ICollection IDictionary.Values => ToDictionary().Values;
+		ICollection IDictionary.Keys => _kvArray.Select(pair => pair.Key).ToList();
+		ICollection IDictionary.Values => _kvArray.Select(pair => pair.Value).ToList();
 		object ICollection.SyncRoot => syncRoot;
 		object IDictionary.this[object key] { get => this[(TKey)key]; set => this[(TKey)key] = (TValue)value; }
 
@@ -111,7 +111,7 @@ namespace AscheLib.Collections {
 		private Dictionary<TKey, TValue> ToDictionary() {
 			var result = new Dictionary<TKey, TValue>();
 			foreach(var kv in _kvArray) {
-				result.Add(kv.Key, kv.Value);
+				if(!result.ContainsKey(kv.Key)) result.Add(kv.Key, kv.Value);
 			}
 			return result;
 		}
@@ -136,7 +136,9 @@ namespace AscheLib.Collections {
 					index++;
 				}
 				var removeTarget = _kvArray[index];
-				return _kvArray.Remove(removeTarget);
+				var result = _kvArray.Remove(removeTarget);
+				Remove(key);
+				return result;
 			}
 			return false;
 		}
@@ -156,6 +158,7 @@ namespace AscheLib.Collections {
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
 			return ToDictionary().GetEnumerator();
 		}
+
 		IEnumerator IEnumerable.GetEnumerator() {
 			return ToDictionary().GetEnumerator();
 		}
