@@ -3,7 +3,7 @@
     "displayName": "SerializableDictionary",
     "version": "1.2.0",
     "unity": "2018.3",
-    "description": "",
+    "description": "Dictionary that can be edit on Inspector",
     "author": {
         "name": "Syunta Washidu (AscheLab)",
         "url": "https://github.com/AscheLab",
