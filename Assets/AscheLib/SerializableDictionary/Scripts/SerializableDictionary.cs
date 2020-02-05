@@ -10,7 +10,9 @@ namespace AscheLib.Collections {
 	/// Base class for PropertyDrawer of SerializableDictionary
 	/// </summary>
 	[Serializable]
-	public abstract class DrawableSerializableDictionaryBase { }
+	public abstract class DrawableSerializableDictionaryBase {
+		public abstract bool HasDuplicationKey { get; }
+	}
 
 	/// <summary>
 	/// Base class for generating a Dictionary that can be displayed in the Inspector
@@ -59,7 +61,8 @@ namespace AscheLib.Collections {
 				return GetValue(key);
 			}
 		}
-		public bool HasDuplicationKey { get => _kvArray.GroupBy(name => name).Where(name => name.Count() > 1).ToList().Count > 0; }
+		public override bool HasDuplicationKey { get => _kvArray.GroupBy(pair => pair.Key).Where(group => group.Count() > 1).ToList().Count > 0; }
+
 		public int Count => _kvArray.Count;
 		public ICollection<TKey> Keys => _kvArray.Select(pair => pair.Key).ToList();
 		public ICollection<TValue> Values => _kvArray.Select(pair => pair.Value).ToList();
