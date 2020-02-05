@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using System;
+using System.Reflection;
 
 namespace AscheLib.Collections {
 	/// <summary>
@@ -10,6 +12,7 @@ namespace AscheLib.Collections {
 	/// </summary>
 	[CustomPropertyDrawer(typeof(DrawableSerializableDictionaryBase), true)]
 	public class SerializableDictionaryInspectorDisplayDrawer : PropertyDrawer {
+		private const string WarningMessage = "The same key is registered.\r\nIf the same key is registered, only the data registered earlier can be obtained.";
 		ReorderableList _reorderableList;
 
 		public override void OnGUI(Rect position, SerializedProperty serializedProperty, GUIContent label) {
@@ -24,11 +27,18 @@ namespace AscheLib.Collections {
 			list.elementHeight = height;
 			list.DoList(position);
 			EditorGUI.EndProperty();
+
+			if(HasDuplicationKey(serializedProperty)) {
+				position.y += list.GetHeight();
+				position.height = GetHelpBoxHeight();
+				EditorGUI.HelpBox(position, WarningMessage, MessageType.Warning);
+			}
 		}
 
 		public override float GetPropertyHeight(SerializedProperty serializedProperty, GUIContent label) {
 			SerializedProperty listProperty = serializedProperty.FindPropertyRelative("_kvArray");
-			return GetList(listProperty, label).GetHeight();
+			var listHeight = GetList(listProperty, label).GetHeight();
+			return HasDuplicationKey(serializedProperty) ? listHeight + GetHelpBoxHeight() : listHeight;
 		}
 
 		private ReorderableList GetList(SerializedProperty serializedProperty, GUIContent label) {
@@ -49,6 +59,18 @@ namespace AscheLib.Collections {
 			}
 
 			return _reorderableList;
+		}
+
+		private bool HasDuplicationKey(SerializedProperty serializedProperty) {
+			Type parentType = serializedProperty.serializedObject.targetObject.GetType();
+			FieldInfo fieldInfo = parentType.GetField(serializedProperty.propertyPath);
+			var value = (DrawableSerializableDictionaryBase)fieldInfo.GetValue(serializedProperty.serializedObject.targetObject);
+			return value.HasDuplicationKey;
+		}
+		private float GetHelpBoxHeight () {
+			var style = new GUIStyle("HelpBox");
+			var content = new GUIContent(WarningMessage);
+			return Mathf.Max(style.CalcHeight(content, Screen.width - 53), 40);
 		}
 	}
 

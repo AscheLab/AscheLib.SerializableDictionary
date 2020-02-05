@@ -18,7 +18,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
     }
   ],
   "dependencies": {
-    "com.aschelab.serializabledictionary": "1.2.0",
+    "com.aschelab.serializabledictionary": "1.3.0",
   ...
   }
 ```
@@ -43,11 +43,23 @@ public SerializableDictionary _testDictionary;
 
 // It can be used like System.Collections.Generic.Dictionary<TKey, TValue> class
 private void Start() {
-	if(!_testDictionary.ContainsKey("zzz")) {
-		_testDictionary.Add("zzz", 2525);
-	}
-	int zzzValue = _testDictionary["zzz"];
-	Debug.Log(zzzValue);
+  if(!_testDictionary.ContainsKey("zzz")) {
+    _testDictionary.Add("zzz", 2525);
+  }
+  int zzzValue = _testDictionary["zzz"];
+  Debug.Log(zzzValue);
+}
+```
+If it is Unity 2020.1 or later, you can also write as follows
+```csharp
+// How to write Unity 2020.1 and above
+public SerializableDictionary<string, int> _testDictionary;
+private void Start() {
+  if(!_testDictionary.ContainsKey("zzz")) {
+    _testDictionary.Add("zzz", 2525);
+  }
+  int zzzValue = _testDictionary["zzz"];
+  Debug.Log(zzzValue);
 }
 ```
 
