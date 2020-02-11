@@ -10,9 +10,7 @@ namespace AscheLib.Collections {
 	/// Base class for PropertyDrawer of SerializableDictionary
 	/// </summary>
 	[Serializable]
-	public abstract class DrawableSerializableDictionaryBase {
-		public abstract bool HasDuplicationKey { get; }
-	}
+	public abstract class DrawableSerializableDictionaryBase { }
 
 	/// <summary>
 	/// Base class for generating a Dictionary that can be displayed in the Inspector
@@ -45,7 +43,7 @@ namespace AscheLib.Collections {
 		public TValue this[TKey key] {
 			set {
 				if(ContainsKey(key)) {
-					int index = 0;
+                    var index = 0;
 					foreach(var kv in _kvArray) {
 						if(kv.Key.Equals(key))
 							break;
@@ -61,7 +59,7 @@ namespace AscheLib.Collections {
 				return GetValue(key);
 			}
 		}
-		public override bool HasDuplicationKey { get => _kvArray.GroupBy(pair => pair.Key).Where(group => group.Count() > 1).ToList().Count > 0; }
+		public bool HasDuplicationKey { get => _kvArray.GroupBy(pair => pair.Key).Where(group => group.Count() > 1).ToList().Count > 0; }
 
 		public int Count => _kvArray.Count;
 		public ICollection<TKey> Keys => _kvArray.Select(pair => pair.Key).ToList();
@@ -132,7 +130,7 @@ namespace AscheLib.Collections {
 
 		public bool Remove(TKey key) {
 			if(ContainsKey(key)) {
-				int index = 0;
+                var index = 0;
 				foreach(var kv in _kvArray) {
 					if( kv.Key.Equals(key))
 						break;
@@ -147,7 +145,7 @@ namespace AscheLib.Collections {
 		}
 		public bool Remove(KeyValuePair<TKey, TValue> item) {
 			if(Contains(item)) {
-				int index = 0;
+                var index = 0;
 				foreach(var kv in _kvArray) {
 					if( kv.Key.Equals(item.Key) && kv.Value.Equals(item.Value))
 						break;
@@ -202,23 +200,19 @@ namespace AscheLib.Collections {
 	}
 
 	/// <summary>
-	/// Base class for PropertyDrawer of SerializableKeyValuePair
-	/// </summary>
-	[Serializable]
-	public abstract class DrawableSerializableKeyValuePairBase { }
-
-	/// <summary>
 	/// Base class for generating KeyValuePair that can be displayed in Inspector
 	/// </summary>
 	[Serializable]
-	public abstract class SerializableKeyValuePairBase<TKey, TValue> : DrawableSerializableKeyValuePairBase {
+	public abstract class SerializableKeyValuePairBase<TKey, TValue> {
 		[SerializeField]
 		private TKey _key;
 		public TKey Key { get { return _key; } }
 		[SerializeField]
 		private TValue _value;
 		public TValue Value { get { return _value; } }
-		public SerializableKeyValuePairBase() { }
+        [SerializeField]
+        protected bool _isIgnore = false;
+        public SerializableKeyValuePairBase() { }
 		public SerializableKeyValuePairBase(TKey key, TValue value) {
 			_key = key;
 			_value = value;
@@ -228,10 +222,10 @@ namespace AscheLib.Collections {
 			_value = pair.Value;
 		}
 		public static TPair Create<TPair>(TKey key, TValue value) where TPair : SerializableKeyValuePairBase<TKey, TValue>, new() {
-			TPair newPair = new TPair();
-			newPair._key = key;
-			newPair._value = value;
-			return newPair;
+			var result = new TPair();
+            result._key = key;
+            result._value = value;
+			return result;
 		}
 	}
 
