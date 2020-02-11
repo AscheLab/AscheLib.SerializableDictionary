@@ -59,8 +59,8 @@ namespace AscheLib.Collections {
 
         private void UpdateIgnoreDictionary(SerializedProperty serializedProperty) {
             var parentType = serializedProperty.serializedObject.targetObject.GetType();
-            var parentInfo = parentType.GetField(serializedProperty.propertyPath);
-            var parentValue = parentInfo.GetValue(serializedProperty.serializedObject.targetObject);
+            var parentInfo = parentType.GetField(serializedProperty.propertyPath, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			var parentValue = parentInfo.GetValue(serializedProperty.serializedObject.targetObject);
             var dictionaryType = parentValue.GetType();
             var kvArrayInfo = GetSuperClassGetField(dictionaryType, "_kvArray", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             var kvArray = (IList)kvArrayInfo.GetValue(parentValue);
@@ -76,23 +76,6 @@ namespace AscheLib.Collections {
             }
         }
 
-        private void UpdateIgnore(SerializedProperty serializedProperty) {
-            var parentType = serializedProperty.serializedObject.targetObject.GetType();
-            var parentInfo = parentType.GetField(serializedProperty.propertyPath);
-            var parentValue = parentInfo.GetValue(serializedProperty.serializedObject.targetObject);
-            var dicType = parentValue.GetType();
-            var kvArrayInfo = GetSuperClassGetField(dicType, "_kvArray", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var kvArray = (IList)kvArrayInfo.GetValue(parentValue);
-
-            var keyList = new List<object>();
-            foreach (var kv in kvArray) {
-                var keyInfo = GetSuperClassGetField(kv.GetType(), "_key", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                var key = keyInfo.GetValue(kv);
-                var isIgnoreInfo = GetSuperClassGetField(kv.GetType(), "_isIgnore", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                isIgnoreInfo.SetValue(kv, keyList.Contains(key));
-                keyList.Add(key);
-            }
-        }
         private FieldInfo GetSuperClassGetField(Type type, string name, BindingFlags bindingAttr) {
             var info = type.GetField(name, bindingAttr);
             if (info != null)
