@@ -18,14 +18,10 @@ Find the manifest.json file in the Packages folder of your project and edit it t
     }
   ],
   "dependencies": {
-    "com.aschelab.serializabledictionary": "1.4.1",
+    "com.aschelab.serializabledictionary": "1.4.3",
   ...
   }
 ```
-### Using .unitypackage file
-Please import this unitypackage.
-https://github.com/AscheLab/AscheLib.SerializableDictionary/releases/latest/download/AscheLib.SerializableDictionary.unitypackage
-
 ## Using for SerializableDictionary
 ```csharp
 using System;

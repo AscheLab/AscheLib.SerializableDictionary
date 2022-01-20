@@ -1,0 +1,16 @@
+{
+    "name": "AscheLib.SelealizableDictionary.Editor",
+    "references": [
+        "AscheLib.SelealizableDictionary"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
