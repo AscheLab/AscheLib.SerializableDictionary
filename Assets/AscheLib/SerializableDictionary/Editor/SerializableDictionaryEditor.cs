@@ -52,23 +52,25 @@ namespace AscheLib.Collections {
                     var property = _reorderableList.serializedProperty.GetArrayElementAtIndex(index);
                     return GetKeyValueHeight(property, label, _ignoreDictionary[index]);
 				};
+				_reorderableList.drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, serializedProperty.displayName);
 			}
 
 			return _reorderableList;
 		}
 
         private void UpdateIgnoreDictionary(SerializedProperty serializedProperty) {
-            var parentType = serializedProperty.serializedObject.targetObject.GetType();
-            var parentInfo = parentType.GetField(serializedProperty.propertyPath, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			var parentValue = parentInfo.GetValue(serializedProperty.serializedObject.targetObject);
+			BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+			var parentInfo = GetFieldInfoFromSerializedProperty(serializedProperty, bindingAttr);
+			var parentValue = GetValueFromSerializedProperty(serializedProperty, bindingAttr);
             var dictionaryType = parentValue.GetType();
-            var kvArrayInfo = GetSuperClassGetField(dictionaryType, "_kvArray", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var kvArrayInfo = GetSuperClassGetField(dictionaryType, "_kvArray", bindingAttr);
             var kvArray = (IList)kvArrayInfo.GetValue(parentValue);
 
             var keyList = new List<object>();
             var count = 0;
             foreach (var kv in kvArray) {
-                var keyInfo = GetSuperClassGetField(kv.GetType(), "_key", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var keyInfo = GetSuperClassGetField(kv.GetType(), "_key", bindingAttr);
                 var key = keyInfo.GetValue(kv);
                 _ignoreDictionary[count] = keyList.Contains(key);
                 keyList.Add(key);
@@ -85,7 +87,28 @@ namespace AscheLib.Collections {
             return null;
         }
 
-        private void DrawKeyValue(Rect position, SerializedProperty serializedProperty, GUIContent label, bool isIgnore) {
+		private FieldInfo GetFieldInfoFromSerializedProperty(SerializedProperty property, BindingFlags bindingAttr) {
+			object obj = property.serializedObject.targetObject;
+			foreach (var path in property.propertyPath.Split('.')) {
+				var type = obj.GetType();
+				var field = type.GetField(path, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+				if (field != null)
+					return field;
+			}
+			return null;
+		}
+
+		private object GetValueFromSerializedProperty(SerializedProperty property, BindingFlags bindingAttr) {
+			object obj = property.serializedObject.targetObject;
+			foreach (var path in property.propertyPath.Split('.')) {
+				var type = obj.GetType();
+				var field = type.GetField(path, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+				obj = field.GetValue(obj);
+			}
+			return obj;
+		}
+
+		private void DrawKeyValue(Rect position, SerializedProperty serializedProperty, GUIContent label, bool isIgnore) {
             label = EditorGUI.BeginProperty(position, label, serializedProperty);
             var keyProperty = serializedProperty.FindPropertyRelative("_key");
             var valueProperty = serializedProperty.FindPropertyRelative("_value");
