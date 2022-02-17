@@ -43,7 +43,7 @@ namespace AscheLib.Collections {
 		public TValue this[TKey key] {
 			set {
 				if(ContainsKey(key)) {
-                    var index = 0;
+					var index = 0;
 					foreach(var kv in _kvArray) {
 						if(kv.Key.Equals(key))
 							break;
@@ -130,7 +130,7 @@ namespace AscheLib.Collections {
 
 		public bool Remove(TKey key) {
 			if(ContainsKey(key)) {
-                var index = 0;
+				var index = 0;
 				foreach(var kv in _kvArray) {
 					if( kv.Key.Equals(key))
 						break;
@@ -145,7 +145,7 @@ namespace AscheLib.Collections {
 		}
 		public bool Remove(KeyValuePair<TKey, TValue> item) {
 			if(Contains(item)) {
-                var index = 0;
+				var index = 0;
 				foreach(var kv in _kvArray) {
 					if( kv.Key.Equals(item.Key) && kv.Value.Equals(item.Value))
 						break;
@@ -210,9 +210,9 @@ namespace AscheLib.Collections {
 		[SerializeField]
 		private TValue _value;
 		public TValue Value { get { return _value; } }
-        [SerializeField]
-        protected bool _isIgnore = false;
-        public SerializableKeyValuePairBase() { }
+		[SerializeField]
+		protected bool _isIgnore = false;
+		public SerializableKeyValuePairBase() { }
 		public SerializableKeyValuePairBase(TKey key, TValue value) {
 			_key = key;
 			_value = value;
@@ -223,8 +223,8 @@ namespace AscheLib.Collections {
 		}
 		public static TPair Create<TPair>(TKey key, TValue value) where TPair : SerializableKeyValuePairBase<TKey, TValue>, new() {
 			var result = new TPair();
-            result._key = key;
-            result._value = value;
+			result._key = key;
+			result._value = value;
 			return result;
 		}
 	}

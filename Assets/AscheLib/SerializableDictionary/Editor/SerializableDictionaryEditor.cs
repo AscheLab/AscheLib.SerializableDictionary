@@ -14,14 +14,14 @@ namespace AscheLib.Collections {
 	public class SerializableDictionaryInspectorDisplayDrawer : PropertyDrawer {
 		private const string WarningMessage = "Duplicate key exists\r\nThis value will be ignored.";
 		ReorderableList _reorderableList;
-        Dictionary<int, bool> _ignoreDictionary = new Dictionary<int, bool>();
+		Dictionary<int, bool> _ignoreDictionary = new Dictionary<int, bool>();
 
-        public override void OnGUI(Rect position, SerializedProperty serializedProperty, GUIContent label) {
-            label = EditorGUI.BeginProperty(position, label, serializedProperty);
-            var list = GetList(serializedProperty, label);
-            var listProperty = serializedProperty.FindPropertyRelative("_kvArray");
+		public override void OnGUI(Rect position, SerializedProperty serializedProperty, GUIContent label) {
+			label = EditorGUI.BeginProperty(position, label, serializedProperty);
+			var list = GetList(serializedProperty, label);
+			var listProperty = serializedProperty.FindPropertyRelative("_kvArray");
 
-            var height = 0f;
+			var height = 0f;
 			for(var i = 0; i < listProperty.arraySize; i++) {
 				height = Mathf.Max(height, EditorGUI.GetPropertyHeight(listProperty.GetArrayElementAtIndex(i)));
 			}
@@ -36,21 +36,21 @@ namespace AscheLib.Collections {
 		}
 
 		private ReorderableList GetList(SerializedProperty serializedProperty, GUIContent label) {
-            UpdateIgnoreDictionary(serializedProperty);
+			UpdateIgnoreDictionary(serializedProperty);
 			if (_reorderableList == null) {
-                var listProperty = serializedProperty.FindPropertyRelative("_kvArray");
-                var labelText = label.text;
+				var listProperty = serializedProperty.FindPropertyRelative("_kvArray");
+				var labelText = label.text;
 				_reorderableList = new ReorderableList(listProperty.serializedObject, listProperty, true, true, true, true);
 				_reorderableList.drawElementCallback += (rect, index, selected, focused) => {
-                    var property = _reorderableList.serializedProperty.GetArrayElementAtIndex(index);
-                    DrawKeyValue(rect, property, GUIContent.none, _ignoreDictionary[index]);
-                };
+					var property = _reorderableList.serializedProperty.GetArrayElementAtIndex(index);
+					DrawKeyValue(rect, property, GUIContent.none, _ignoreDictionary[index]);
+				};
 				_reorderableList.drawHeaderCallback += rect => {
 					EditorGUI.LabelField(rect, labelText);
 				};
 				_reorderableList.elementHeightCallback += (index) => {
-                    var property = _reorderableList.serializedProperty.GetArrayElementAtIndex(index);
-                    return GetKeyValueHeight(property, label, _ignoreDictionary[index]);
+					var property = _reorderableList.serializedProperty.GetArrayElementAtIndex(index);
+					return GetKeyValueHeight(property, label, _ignoreDictionary[index]);
 				};
 				_reorderableList.drawHeaderCallback = (rect) => EditorGUI.LabelField(rect, serializedProperty.displayName);
 			}
@@ -58,34 +58,34 @@ namespace AscheLib.Collections {
 			return _reorderableList;
 		}
 
-        private void UpdateIgnoreDictionary(SerializedProperty serializedProperty) {
+		private void UpdateIgnoreDictionary(SerializedProperty serializedProperty) {
 			BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
 			var parentInfo = GetFieldInfoFromSerializedProperty(serializedProperty, bindingAttr);
 			var parentValue = GetValueFromSerializedProperty(serializedProperty, bindingAttr);
-            var dictionaryType = parentValue.GetType();
-            var kvArrayInfo = GetSuperClassGetField(dictionaryType, "_kvArray", bindingAttr);
-            var kvArray = (IList)kvArrayInfo.GetValue(parentValue);
+			var dictionaryType = parentValue.GetType();
+			var kvArrayInfo = GetSuperClassGetField(dictionaryType, "_kvArray", bindingAttr);
+			var kvArray = (IList)kvArrayInfo.GetValue(parentValue);
 
-            var keyList = new List<object>();
-            var count = 0;
-            foreach (var kv in kvArray) {
-                var keyInfo = GetSuperClassGetField(kv.GetType(), "_key", bindingAttr);
-                var key = keyInfo.GetValue(kv);
-                _ignoreDictionary[count] = keyList.Contains(key);
-                keyList.Add(key);
-                count++;
-            }
-        }
+			var keyList = new List<object>();
+			var count = 0;
+			foreach (var kv in kvArray) {
+				var keyInfo = GetSuperClassGetField(kv.GetType(), "_key", bindingAttr);
+				var key = keyInfo.GetValue(kv);
+				_ignoreDictionary[count] = keyList.Contains(key);
+				keyList.Add(key);
+				count++;
+			}
+		}
 
-        private FieldInfo GetSuperClassGetField(Type type, string name, BindingFlags bindingAttr) {
-            var info = type.GetField(name, bindingAttr);
-            if (info != null)
-                return info;
-            else if (type.BaseType != null)
-                return GetSuperClassGetField(type.BaseType, name, bindingAttr);
-            return null;
-        }
+		private FieldInfo GetSuperClassGetField(Type type, string name, BindingFlags bindingAttr) {
+			var info = type.GetField(name, bindingAttr);
+			if (info != null)
+				return info;
+			else if (type.BaseType != null)
+				return GetSuperClassGetField(type.BaseType, name, bindingAttr);
+			return null;
+		}
 
 		private FieldInfo GetFieldInfoFromSerializedProperty(SerializedProperty property, BindingFlags bindingAttr) {
 			object obj = property.serializedObject.targetObject;
@@ -109,47 +109,47 @@ namespace AscheLib.Collections {
 		}
 
 		private void DrawKeyValue(Rect position, SerializedProperty serializedProperty, GUIContent label, bool isIgnore) {
-            label = EditorGUI.BeginProperty(position, label, serializedProperty);
-            var keyProperty = serializedProperty.FindPropertyRelative("_key");
-            var valueProperty = serializedProperty.FindPropertyRelative("_value");
+			label = EditorGUI.BeginProperty(position, label, serializedProperty);
+			var keyProperty = serializedProperty.FindPropertyRelative("_key");
+			var valueProperty = serializedProperty.FindPropertyRelative("_value");
 
-            var keyHeight = EditorGUI.GetPropertyHeight(keyProperty, label);
-            var valueHeight = EditorGUI.GetPropertyHeight(valueProperty, label);
-            var helpBoxHeight = isIgnore ? GetHelpBoxHeight() : 0;
+			var keyHeight = EditorGUI.GetPropertyHeight(keyProperty, label);
+			var valueHeight = EditorGUI.GetPropertyHeight(valueProperty, label);
+			var helpBoxHeight = isIgnore ? GetHelpBoxHeight() : 0;
 
-            var backgroundRect = new Rect(position.x, position.y, position.width, keyHeight + valueHeight + helpBoxHeight);
+			var backgroundRect = new Rect(position.x, position.y, position.width, keyHeight + valueHeight + helpBoxHeight);
 			GUI.Box(backgroundRect, GUIContent.none, new GUIStyle("CN Box"));
 
-            var currentPosition = position.y;
+			var currentPosition = position.y;
 			EditorGUI.PropertyField(new Rect(position.x + 13, currentPosition, position.width -13, keyHeight), keyProperty, true);
 			currentPosition += keyHeight;
 
 			EditorGUI.PropertyField(new Rect(position.x + 13, currentPosition, position.width -13, valueHeight), valueProperty, true);
-            currentPosition += valueHeight;
+			currentPosition += valueHeight;
 
-            if (isIgnore) {
-                EditorGUI.HelpBox(new Rect(position.x + 13, currentPosition, position.width - 13, helpBoxHeight), WarningMessage, MessageType.Warning);
-            }
+			if (isIgnore) {
+				EditorGUI.HelpBox(new Rect(position.x + 13, currentPosition, position.width - 13, helpBoxHeight), WarningMessage, MessageType.Warning);
+			}
 
-            EditorGUI.EndProperty();
-        }
+			EditorGUI.EndProperty();
+		}
 
-        private float GetKeyValueHeight(SerializedProperty serializedProperty, GUIContent label, bool isIgnore) {
-            var keyProperty = serializedProperty.FindPropertyRelative("_key");
-            var valueProperty = serializedProperty.FindPropertyRelative("_value");
-            var isIgnoreProperty = serializedProperty.FindPropertyRelative("_isIgnore");
+		private float GetKeyValueHeight(SerializedProperty serializedProperty, GUIContent label, bool isIgnore) {
+			var keyProperty = serializedProperty.FindPropertyRelative("_key");
+			var valueProperty = serializedProperty.FindPropertyRelative("_value");
+			var isIgnoreProperty = serializedProperty.FindPropertyRelative("_isIgnore");
 
-            var keyHeight = EditorGUI.GetPropertyHeight(keyProperty, label);
-            var valueHeight = EditorGUI.GetPropertyHeight(valueProperty, label);
-            var helpBoxHeight = isIgnore ? GetHelpBoxHeight() : 0;
+			var keyHeight = EditorGUI.GetPropertyHeight(keyProperty, label);
+			var valueHeight = EditorGUI.GetPropertyHeight(valueProperty, label);
+			var helpBoxHeight = isIgnore ? GetHelpBoxHeight() : 0;
 
-            return keyHeight + valueHeight + helpBoxHeight + EditorGUIUtility.standardVerticalSpacing;
-        }
+			return keyHeight + valueHeight + helpBoxHeight + EditorGUIUtility.standardVerticalSpacing;
+		}
 
-        private float GetHelpBoxHeight() {
-            var style = new GUIStyle("HelpBox");
-            var content = new GUIContent(WarningMessage);
-            return Mathf.Max(style.CalcHeight(content, Screen.width - 53), 40);
-        }
-    }
+		private float GetHelpBoxHeight() {
+			var style = new GUIStyle("HelpBox");
+			var content = new GUIContent(WarningMessage);
+			return Mathf.Max(style.CalcHeight(content, Screen.width - 53), 40);
+		}
+	}
 }
