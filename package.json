@@ -1,7 +1,7 @@
 {
     "name": "com.aschelab.serializabledictionary",
     "displayName": "AscheLib.SerializableDictionary",
-    "version": "1.4.3",
+    "version": "1.4.4",
     "unity": "2018.3",
     "description": "Dictionary that can be edit on Inspector",
     "author": {
